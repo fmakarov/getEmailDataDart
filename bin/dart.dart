@@ -28,14 +28,11 @@ fetchData(email) async {
   var url2 = Uri.https("www.1secmail.com", "/api/v1/",
       {"action": "getMessages", "login": login, "domain": domain});
 
-  print(url2);
-
   try {
     var resp = await get(url2);
     var respList = json.decode(resp.body);
+    print(respList);
   } catch (err) {
     return err;
   }
-
-  // print(json.decode(message.body));
 }
