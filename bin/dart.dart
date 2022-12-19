@@ -9,7 +9,7 @@ void main() async {
 }
 
 var url =
-    Uri.https("www.1secmail.com", "/api/v1/", {"action": "genRandomMailbox"});
+Uri.https("www.1secmail.com", "/api/v1/", {"action": "genRandomMailbox"});
 
 Future<Object> fetchEmail() async {
   try {
@@ -28,11 +28,14 @@ fetchData(email) async {
   var url2 = Uri.https("www.1secmail.com", "/api/v1/",
       {"action": "getMessages", "login": login, "domain": domain});
 
-  try {
-    var resp = await get(url2);
-    var respList = json.decode(resp.body);
-    print(respList);
-  } catch (err) {
-    return err;
+  while(true) {
+    try {
+      var resp = await get(url2);
+      var respList = json.decode(resp.body);
+      print(respList);
+    } catch (err) {
+      return err;
+    }
+    await Future.delayed(Duration(seconds: 20));
   }
 }
