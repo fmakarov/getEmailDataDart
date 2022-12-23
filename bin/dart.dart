@@ -41,14 +41,14 @@ fetchData(email) async {
 
       var m_id = respList[0]["id"];
       print(m_id);
-      var url3 = Uri.http("www.1secmail.com", "/api/v1/",
-          {"action": "getMessages", "login": login, "domain": domain});
+      var url3 = Uri.http("www.1secmail.com", "/api/v1/", {
+        "action": "readMessage",
+        "login": login,
+        "domain": domain,
+        "id": m_id
+      });
       var url33 = http.get(url3);
       print(url33);
-      //print(url3);
-      //var resp1 = await http.get(url3);
-      //var respList1 = json.decode(resp1.body);
-      print(url3);
     } catch (err) {
       return err;
     }
