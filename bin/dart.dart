@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:async';
 
 void main() async {
   Object email = await fetchEmail();
+  await Future.delayed(Duration(seconds: 1));
   fetchData(email);
-  while (true) {
-    await fetchData(email);
-    await Future.delayed(Duration(seconds: 20));
-  }
 }
 
 var url =
@@ -23,35 +21,34 @@ Future<Object> fetchEmail() async {
   }
 }
 
-fetchData(email) async {
+Future checkMail(url2, email) async {
+  try {
+    var resp = await http.get(url2);
+    var respList = json.decode(resp.body);
+
+    var messageId = respList[0]["id"];
+    var text = respList[0]["subject"];
+
+    print("messageId: $messageId, subject message: $text");
+
+  } catch (err) {
+    return err;
+  }
+}
+
+Future fetchData(email) async {
   var login = email.split("@")[0];
   var domain = email.split("@")[1];
 
-  print(email);
-
   var url2 = Uri.http("www.1secmail.com", "/api/v1/",
       {"action": "getMessages", "login": login, "domain": domain});
-//Future<void> fetchData();
 
-  while (true) {
-    try {
-      var resp = await http.get(url2);
-      var respList = json.decode(resp.body);
-      //print(respList);
+  Timer checkEmail = Timer.periodic(Duration(seconds: 6), (timer) {
+    checkMail(url2, email);
+  });
 
-      var m_id = respList[0]["id"];
-      print(m_id);
-      var url3 = Uri.http("www.1secmail.com", "/api/v1/", {
-        "action": "readMessage",
-        "login": login,
-        "domain": domain,
-        "id": m_id
-      });
-      var url33 = http.get(url3);
-      print(url33);
-    } catch (err) {
-      return err;
-    }
-    await Future.delayed(Duration(seconds: 20));
-  }
+  print("Start check message: $email");
+
+  checkEmail;
 }
+
